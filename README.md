@@ -1,52 +1,169 @@
-# Web3.py-Retrieve and display block data
+# Retrieve and display block data using Web3.py
 
-This script uses the web3.py library to access a blockchain and retrieve and display the latest block's information in the console.
+## Introduction
 
-You can also check my Skillshare class where I show the fundamentals about web3.py. WEB3.py: Interact with the Blockchain
-Get 30 days for free using this link! https://skl.sh/3McEymV
+Starting web3 development can be challenging; that's why I created a lot of tutorials where I show you how to make simple programs to interact with a blockchain. This is an excellent way to start your journey into web3 development by understanding how to interact with a blockchain!
 
-<b>What is Web3.py?</b>
+This tutorial shows you how to use the `web3.py` library to access a blockchain and retrieve and display the latest block's information in the console.
 
-Web3.py is a Python library for interacting with the Ethereum network (Or other networks based on the EVM).
+The script we'll create in this tutorial allows a user to input an HTTPS endpoint for an EVM-based network, then displays:
+- Latest block number.
+- The parsed information of the latest block.
 
-It’s commonly found in decentralized apps (dapps) to help with sending transactions, interacting with smart contracts, reading block data, and a variety of other use cases.
+After that, you can use some Python logic to analyze and use this information.
 
-The original API was derived from the Web3.js Javascript API but has since evolved toward the needs and creature comforts of Python developers. (source: [Web3.py docs](https://web3py.readthedocs.io/en/stable/))
+> The code is commented to that you can understand what we do and why!
 
-<b>How do I use this program to retrieve block data</b>
+> You can also check my Skillshare class where I elaborate more on this! 
 
-1 - The Web3.py library must be installed in your environment.
+### WEB3.py: Interact with the Blockchain
 
-Run this code to install it in your enviroment:
+[Get 30 days for free on Skillshare using this link!](https://skl.sh/3McEymV)
 
-``` sh
+## Table of contents
+
+  - [Introduction](#introduction)
+    - [WEB3.py: Interact with the Blockchain](#web3py-interact-with-the-blockchain)
+  - [Requirements](#requirements)
+    - [Install web3.py](#install-web3py)
+    - [Access a node endpoint](#access-a-node-endpoint)
+  - [What is Web3.py?](#what-is-web3py)
+  - [Explore the code](#explore-the-code)
+    - [Connect to the node](#connect-to-the-node)
+    - [Retrieve the block data information](#retrieve-the-block-data-information)
+    - [Loop through the data and parse the information to display on the console](#loop-through-the-data-and-parse-the-information-to-display-on-the-console)
+  - [Run the script](#run-the-script)
+  - [Full script](#full-script)
+  - [Conclusion](#conclusion)
+
+## Requirements 
+
+This program has been designed using the `Web3.py` library, you will need the following: 
+
+- [Python](https://www.python.org/downloads/).
+- [web3.py library](https://web3py.readthedocs.io/en/stable/quickstart.html)
+- Access to an EVM node endpoint. 
+
+### Install web3.py
+
+Install `web3.py` after installing Python with:
+
+```sh
 pip install web3
 ```
 
 > **Note** that on Windows, you will need to install the [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) to make it work.
 
-2 - Have access to an HTTPS endpoint that allows creating the connection to the EVM. For the connection, it is recommended to use the service provided by [chainstack.com](https://chainstack.com/), where you can create your personal node on the cloud. You can register and create one node for free. This is the recommended option as not all the HTTPS endpoints that can be found online support the methods that can be used through Web3.py.
+Then you need access to a node endpoint to connect to a blockchain.
 
-![162478127-94cd2344-72f1-4136-a220-8b2c8e52d194](https://user-images.githubusercontent.com/99700157/169823194-c3202f8f-5438-4a45-95e8-b2e1f6d44225.png)
+### Access a node endpoint
 
-Insert the URL you get from your Chainstack node in the 'node_url' variable.
+To access a node endpoint, I recommend using [Chainstack](https://chainstack.com/):
+
+Follow these steps to sign up on Chainstack, deploy a node, and find your endpoint credentials:
+
+  1. [Sign up with Chainstack](https://console.chainstack.com/user/account/create).
+  1. [Deploy a node](https://docs.chainstack.com/platform/join-a-public-network).
+  1. [View node access and credentials](https://docs.chainstack.com/platform/view-node-access-and-credentials).
+
+
+## What is Web3.py?
+
+Web3.py is a Python library for interacting with the Ethereum network (Or other networks based on the EVM).
+
+It’s commonly found in decentralized apps (dapps) to help with sending transactions, interacting with smart contracts, reading block data, and a variety of other use cases.
+
+The original API was derived from the Web3.js Javascript API but has since evolved toward the needs and creature comforts of Python developers.
+
+* source: [Web3.py docs](https://web3py.readthedocs.io/en/stable/)
+
+## Explore the code
+
+The code is very Python fashion and is absolutely straightforward. The script can be divided into three sections:
+
+1. Establish a connection to the node by inserting the node URL.
+1. Retrieve the block data information.
+1. Loop through the data and parse the information to display on the console.
+
+Let's start by creating a new Python file in your project's folder; I named it `block_data.py`.
+
+### Connect to the node
+
+The first part of the script is to establish a connection to the node; for this, we use the following code.
+
+> **Note** that in this case, we ask the user for an input, so you can use the URL you want at that moment since you can use this script with any EVM-compatible network, but you can also hardcode the URL.
 
 ```py
-# Node endpoint
-node_url = "CHAINSTACK_NODE_URL"
+from web3 import Web3                            # Import the web3 library at the top.
+from hexbytes import HexBytes                    # Import the hexbytes to convert bytes into HEX.
 
-# Create the node connection
-web3 = Web3(Web3.HTTPProvider(node_url))
 
-# Verify if the connection is successful
-if web3.isConnected():
-    print("Connection Successful")
+node_url = input('Insert your Node URL: ')       # Accepts the user node URL.
+web3 = Web3(Web3.HTTPProvider(node_url))         # Establish connection to the node.
+
+# Verify if the connection is successful. This is optional, but it's nice to notify the user.
+if web3.isConnected():                                                          
+    print('Connection Successful')
     print('-' * 50)
 else:
-    print("Connection Failed")
+    print('Connection Failed')
 ```
 
-Run the program, you should receive a similar result:
+This will allow us to establish a connection to the node. 
+
+### Retrieve the block data information
+
+The next step will be to retrieve the block data; to do that, we use the `eth_getBlock` method. 
+
+> **Note** that you will see this line often, `print('-' * 50)`; this simply prints 50 dashes in the console, improving the data's readability.
+
+```py
+# Identify and print the latest block number, we do this just as a reference. 
+last = web3.eth.block_number
+print(f"the latest block is: {last}")
+
+print('Block information:')
+print('-' * 50)
+
+# Retrieve the block data from the blockchain.
+block = web3.eth.get_block('latest')                 # You can also specify the block as a block number, or pending, latest, and earliest.
+#print(block)                                        # this would print the raw data
+```
+
+The object returned into the `block` variable is a `web3 object`, which Python can't work with. So let's convert it into a Python dictionary before looping through it to get the data.
+
+```py
+# convert the web3 object retrieved into a Python dictionary
+dictionary = dict(block)
+```
+### Loop through the data and parse the information to display on the console
+
+The last step is to extract the raw data, parse it to make it more legible, and display it on the console. This is done with some simple Python logic.
+
+> **Note** that some of the data retrieved by `web3.py` is returned as Bytes, and we have to convert it into HEX to make it understandable or use it later.
+
+```py
+# Python logic to loop through the dictionary and format the data.
+for data, value in dictionary.items():
+  
+    # Some of the values are displayed as bytes and need to be formatted
+    if isinstance(value, HexBytes):    
+        print(f"{data}: {web3.toHex(value)}\n")
+    else:
+        print(f"{data}: {value}\n")
+```
+
+Now the script is ready and we can run it!
+
+## Run the script
+
+To run the program, open a terminal in the directory where your Python file lives and run:
+
+```py
+python block_data.py
+```
+
+Then insert your endpoint URL, and you should receive a similar result:
 
 > **Note** that this script was tested with an Ethereum mainnet node.
 
@@ -98,3 +215,51 @@ transactionsRoot: 0x92dd7df89d256af915dc7e1a2855a5abadaf216dd9575ecae159962e49a9
 
 uncles: [HexBytes('0x61b88e3f8f48a0e9719863612a78e64df1c9f8c7e8b4835029662598ffce1306')]
 ```
+
+Now you can take this info and do what you need!
+
+## Full script
+
+Here is how the full script looks like. 
+
+```py
+from web3 import Web3                            # Import the web3 library at the top.
+from hexbytes import HexBytes                    # Import the hexbytes to convert bytes into HEX.
+
+node_url = input('Insert your Node URL: ')       # Accepts the user node URL.
+web3 = Web3(Web3.HTTPProvider(node_url))         # Establish connection to the node.
+
+# Verify if the connection is successful. This is optional, but it's nice to notify the user.
+if web3.isConnected():                                                          
+    print('Connection Successful')
+    print('-' * 50)
+else:
+    print('Connection Failed')
+
+# Identify and print the latest block number
+last = web3.eth.block_number
+print(f"the latest block is: {last}")
+
+print('Block information:')
+print('-' * 50)
+
+# Retrieve the block data from the blockchain
+block = web3.eth.get_block('latest')                # You can also specify the block as a block number, or pending, latest, and earliest.
+#print(block)                                       # this would print the raw data
+
+# convert the web3 object retrieved into a Python dictionary
+dictionary = dict(block)
+
+# Python logic to loop through the dictionary and format the data
+for data, value in dictionary.items():
+  
+    # Some of the values are displayed as bytes and need to be formatted
+    if isinstance(value, HexBytes):    
+        print(f"{data}: {web3.toHex(value)}\n")
+    else:
+        print(f"{data}: {value}\n")
+```
+
+## Conclusion
+
+Now you know how to access and retrieve block data from any EVM blockchain! These tutorials may be simple, but mastering the basics will help you become a more proficient developer!
